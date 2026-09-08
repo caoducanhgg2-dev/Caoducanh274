@@ -2,14 +2,15 @@
 setlocal EnableExtensions
 chcp 65001 >nul
 
-title Comedy Host Studio 5.5.3f Final Repair
+title Comedy Host Studio 5.5.3g NameError Fix
 
 set "APPDIR=%LOCALAPPDATA%\Programs\ComedyHostStudio"
 set "ENGINE=%APPDIR%\engine.py"
-set "PATCHER=%~dp0patch_5_5_3f.ps1"
+set "PATCHF=%~dp0patch_5_5_3f.ps1"
+set "PATCHG=%~dp0patch_5_5_3g_fix.ps1"
 
 echo ============================================================
-echo   COMEDY HOST STUDIO 5.5.3f - FINAL REPAIR HOTFIX
+echo   COMEDY HOST STUDIO 5.5.3g - FINAL REPAIR NAMEERROR FIX
 echo ============================================================
 echo.
 
@@ -20,29 +21,44 @@ if not exist "%ENGINE%" (
   exit /b 1
 )
 
-if not exist "%PATCHER%" (
-  echo [ERROR] Thieu patch_5_5_3f.ps1 trong cung thu muc.
+if not exist "%PATCHF%" (
+  echo [ERROR] Thieu patch_5_5_3f.ps1
+  pause
+  exit /b 1
+)
+if not exist "%PATCHG%" (
+  echo [ERROR] Thieu patch_5_5_3g_fix.ps1
   pause
   exit /b 1
 )
 
-echo [1/2] Dang sao luu va cap nhat engine.py...
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PATCHER%" -EnginePath "%ENGINE%"
+echo [1/3] Dam bao Final Repair 5.5.3f da duoc cai...
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PATCHF%" -EnginePath "%ENGINE%"
 if errorlevel 1 (
   echo.
-  echo [FAILED] Khong the cai 5.5.3f.
-  echo Engine goc van duoc giu trong file backup neu patch da bat dau.
+  echo [FAILED] Khong the ap dung nen Final Repair 5.5.3f.
   pause
   exit /b 1
 )
 
-echo [2/2] Hoan tat.
+echo [2/3] Sua loi helper khai bao sau main()...
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PATCHG%" -EnginePath "%ENGINE%"
+if errorlevel 1 (
+  echo.
+  echo [FAILED] Khong the cai 5.5.3g.
+  echo Engine backup duoc tao truoc khi sua.
+  pause
+  exit /b 1
+)
+
+echo [3/3] Hoan tat.
 echo.
-echo 5.5.3f da duoc cai de sua loi:
-echo - 1 hard-repeat cuoi lam huy ca SRT
-echo - AI tao cau moi nhung bi reject vi khong dung 10 tu
-echo - Final fallback se dung cau factual-safe 10 tu, khong lap
+echo 5.5.3g da sua truc tiep loi:
+echo - name '_antirepeat_last_resort_553f' is not defined
+echo - Final Repair helper duoc dat TRUOC Python main entry point
+echo - Giu nguyen Anti-Repeat, GPU Recovery, GoldStyle va timing
+
 echo.
-echo Mo lai Comedy Host Studio va chay lai video.
+echo Dong cua so nay, mo lai Comedy Host Studio va chay lai video.
 pause
 exit /b 0
