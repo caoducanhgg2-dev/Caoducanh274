@@ -2,15 +2,15 @@
 setlocal EnableExtensions
 chcp 65001 >nul
 
-title Comedy Host Studio 5.5.3g NameError Fix
+title Comedy Host Studio 5.5.3h Helper Order Fix
 
 set "APPDIR=%LOCALAPPDATA%\Programs\ComedyHostStudio"
 set "ENGINE=%APPDIR%\engine.py"
 set "PATCHF=%~dp0patch_5_5_3f.ps1"
-set "PATCHG=%~dp0patch_5_5_3g_fix.ps1"
+set "PATCHH=%~dp0patch_5_5_3h_fix.ps1"
 
 echo ============================================================
-echo   COMEDY HOST STUDIO 5.5.3g - FINAL REPAIR NAMEERROR FIX
+echo   COMEDY HOST STUDIO 5.5.3h - HELPER BEFORE MAIN DEF FIX
 echo ============================================================
 echo.
 
@@ -26,8 +26,8 @@ if not exist "%PATCHF%" (
   pause
   exit /b 1
 )
-if not exist "%PATCHG%" (
-  echo [ERROR] Thieu patch_5_5_3g_fix.ps1
+if not exist "%PATCHH%" (
+  echo [ERROR] Thieu patch_5_5_3h_fix.ps1
   pause
   exit /b 1
 )
@@ -41,22 +41,23 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo [2/3] Sua loi helper khai bao sau main()...
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PATCHG%" -EnginePath "%ENGINE%"
+echo [2/3] Dat helper Final Repair truoc def main()...
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PATCHH%" -EnginePath "%ENGINE%"
 if errorlevel 1 (
   echo.
-  echo [FAILED] Khong the cai 5.5.3g.
-  echo Engine backup duoc tao truoc khi sua.
+  echo [FAILED] Khong the cai 5.5.3h.
+  echo Engine backup da duoc khoi phuc neu patch bat dau.
   pause
   exit /b 1
 )
 
 echo [3/3] Hoan tat.
 echo.
-echo 5.5.3g da sua truc tiep loi:
-echo - name '_antirepeat_last_resort_553f' is not defined
-echo - Final Repair helper duoc dat TRUOC Python main entry point
-echo - Giu nguyen Anti-Repeat, GPU Recovery, GoldStyle va timing
+echo 5.5.3h da sua truc tiep:
+echo - Loi 5.5.3g khong tim thay Python entry point
+echo - Loi NameError cua _antirepeat_last_resort_553f
+echo - Helper duoc dat TRUOC top-level def main()
+echo - Khong thay doi GPU Recovery, StoryFlow, GoldStyle, Anti-Repeat, timing
 
 echo.
 echo Dong cua so nay, mo lai Comedy Host Studio va chay lai video.
