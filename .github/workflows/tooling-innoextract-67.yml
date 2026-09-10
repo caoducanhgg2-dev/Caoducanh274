@@ -26,12 +26,15 @@ jobs:
         run: |
           cmake -S innoextract -B innoextract/build -DCMAKE_BUILD_TYPE=Release
           cmake --build innoextract/build --config Release -j 2
-          ./innoextract/build/src/innoextract --version
+          BIN="$(find innoextract/build -type f -name innoextract -perm -111 | head -1)"
+          test -n "$BIN"
+          "$BIN" --version
+          echo "INNOEXTRACT_BIN=$BIN" >> "$GITHUB_ENV"
       - name: Package binary
         shell: bash
         run: |
           mkdir -p artifact
-          cp innoextract/build/src/innoextract artifact/innoextract
+          cp "$INNOEXTRACT_BIN" artifact/innoextract
           ldd artifact/innoextract > artifact/ldd.txt
           sha256sum artifact/innoextract > artifact/innoextract.sha256
       - name: Upload artifact
