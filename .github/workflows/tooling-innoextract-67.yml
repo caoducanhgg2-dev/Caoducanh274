@@ -1,0 +1,42 @@
+name: Tooling - Build innoextract 6.7 support
+
+on:
+  push:
+    branches: [tooling-innoextract-67]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tooling branch
+        uses: actions/checkout@v4
+      - name: Checkout patched innoextract
+        uses: actions/checkout@v4
+        with:
+          repository: dscho/innoextract
+          ref: inno-6.4-to-6.7-support
+          path: innoextract
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libboost-all-dev liblzma-dev zlib1g-dev libbz2-dev
+      - name: Build
+        shell: bash
+        run: |
+          cmake -S innoextract -B innoextract/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build innoextract/build --config Release -j 2
+          ./innoextract/build/src/innoextract --version
+      - name: Package binary
+        shell: bash
+        run: |
+          mkdir -p artifact
+          cp innoextract/build/src/innoextract artifact/innoextract
+          ldd artifact/innoextract > artifact/ldd.txt
+          sha256sum artifact/innoextract > artifact/innoextract.sha256
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: innoextract-linux-67
+          path: artifact
+          if-no-files-found: error
